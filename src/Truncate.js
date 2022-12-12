@@ -53,7 +53,8 @@ export default class Truncate extends React.Component {
     componentDidMount() {
         const {
             elements: {
-                text
+                text,
+                ellipsis
             },
             calcTargetWidth,
             onResize
@@ -61,6 +62,11 @@ export default class Truncate extends React.Component {
 
         const canvas = document.createElement('canvas');
         this.canvasContext = canvas.getContext('2d');
+
+        this.setState({
+            ...this.state,
+            ellipsisWidth: ellipsis.offsetWidth
+        })
 
         calcTargetWidth(() => {
             // Node not needed in document tree to read its content
@@ -203,6 +209,7 @@ export default class Truncate extends React.Component {
         canvasContext.font = font;
 
         this.setState({
+            ...this.state,
             targetWidth
         }, callback);
     }
@@ -212,7 +219,7 @@ export default class Truncate extends React.Component {
     }
 
     ellipsisWidth = (node) => {
-        return node.offsetWidth;
+        return this.state.ellipsisWidth || this.measureWidth(node.innerText);
     }
 
     trimRight = (text) => {
